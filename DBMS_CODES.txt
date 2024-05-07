@@ -1,0 +1,1124 @@
+--------------------------------------------------------------------------------------------
+				QUESTION 1
+
+ Consider following scenario: Each student will register one course in university.
+student = (Rno, S_name, S_city) course = (c_Id, c_name, duration)
+a. Draw E-R diagram and convert it into relational schema.
+b. Find number of students for specific course.
+c. Update duration of a specific course by 2yrs.
+d. Display all students whose name starts with ‘M’.
+--------------------------------------------------------------------------------------------
+-- Create database
+CREATE DATABASE IF NOT EXISTS STUDENT;
+USE STUDENT;
+
+-- Creating tables
+CREATE TABLE IF NOT EXISTS Student (
+    Rno INT PRIMARY KEY,
+    S_name VARCHAR(100),
+    S_city VARCHAR(100)
+);
+
+CREATE TABLE IF NOT EXISTS Course (
+    c_Id INT PRIMARY KEY,
+    c_name VARCHAR(100),
+    duration INT
+);
+
+-- Inserting sample data into tables
+INSERT INTO Student (Rno, S_name, S_city)
+VALUES 
+    (1, 'John', 'New York'),
+    (2, 'Mary', 'Los Angeles'),
+    (3, 'Michael', 'Chicago'),
+    (4, 'Emily', 'San Francisco');
+
+INSERT INTO Course (c_Id, c_name, duration)
+VALUES 
+    (101, 'Mathematics', 4),
+    (102, 'Physics', 3),
+    (103, 'Biology', 5);
+
+-- Retrieve details of students enrolled in course 102
+SELECT S.*
+FROM Student S
+JOIN Course C ON S.Rno = C.c_Id
+WHERE C.c_Id = 102;
+
+-- Before updating duration
+SELECT * FROM Course;
+
+-- Updating the duration of a specific course by 2 years
+UPDATE Course
+SET duration = duration + 5
+WHERE c_Id = '102';
+
+-- After updating duration
+SELECT * FROM Course;
+
+-- Displaying all students whose name starts with 'M'
+SELECT *
+FROM Student
+WHERE S_name LIKE 'M%';
+
+
+ER_DIAGRAM:
+   +-----------+             +-----------+
+   |  Student  |             |  Course   |
+   +-----------+             +-----------+
+   | Rno       |             | c_Id      |
+   | S_name    |             | c_name    |
+   | S_city    |             | duration  |
+   +-----------+             +-----------+
+
+
+
+--------------------------------------------------------------------------------------------------
+				QUESTION 2
+
+ Consider following scenario: Each employee belongs to a department.
+employee = (eid, e_name, e_city, salary) dept = (dId, Dname, location)
+a. Draw E-R diagram and convert it into relational schema.
+b. Find average salary of employees in specific department.
+c. Update location of a specific department.
+d. Display list of employees having salary between 20,000 and 50,000.
+e. Display names of employees working in ‘IT’ department
+---------------------------------------------------------------------------------------------------
+
+CREATE DATABASE INDUSTRY;
+USE INDUSTRY;
+-- drop DATABASE INDUSTRY;
+
+-- Creating tables
+CREATE TABLE Employee (
+    eid INT PRIMARY KEY,
+    e_name VARCHAR(100),
+    e_city VARCHAR(100),
+    salary DECIMAL(10, 2)
+);
+
+CREATE TABLE Department (
+    dId INT PRIMARY KEY,
+    Dname VARCHAR(100),
+    location VARCHAR(100)
+);
+
+-- Inserting sample data into tables
+INSERT INTO Employee (eid, e_name, e_city, salary)
+VALUES 
+    (1, 'John', 'New York', 60000),
+    (2, 'Mary', 'Los Angeles', 45000),
+    (3, 'Michael', 'Chicago', 55000),
+    (4, 'Emily', 'San Francisco', 40000);
+
+INSERT INTO Department (dId, Dname, location)
+VALUES 
+    (101, 'IT', 'New York'),
+    (102, 'HR', 'Los Angeles'),
+    (103, 'Finance', 'Chicago');
+
+
+-- Find Average Salary of Employees in a Specific Department (e.g., IT)
+SELECT AVG(salary) AS avg_salary
+FROM Employee
+WHERE eid IN (SELECT eid FROM Department WHERE Dname = 'IT');
+
+-- Before updating
+SELECT * FROM Department;
+
+-- Update Location of a Specific Department (e.g., IT)
+UPDATE Department
+SET location = 'Denmark'
+WHERE dId = '102';
+
+-- After updating
+SELECT * FROM Department;
+
+-- Display List of Employees Having Salary Between 20,000 and 50,000
+SELECT * 
+FROM Employee
+WHERE salary BETWEEN 20000 AND 50000;
+
+-- Display Names of Employees Working in 'IT' Department
+SELECT e_name
+FROM Employee
+WHERE eid IN (SELECT eid FROM Department WHERE Dname = 'IT');
+
+
+ER_DIAGRAM:
+   +-----------+               +-----------+
+   |  Employee |               |  Department |
+   +-----------+               +-----------+
+   | eid       |               | dId       |
+   | e_name    |               | Dname     |
+   | e_city    |               | location  |
+   | salary    |               +-----------+
+   +-----------+
+
+
+-------------------------------------------------------------------------------
+				QUESTION 3
+
+3. Create database and Perform following SQL queries on the database.
+a. Implementation of 3 relational operators in SQL
+b. logical operators and pattern matching
+-------------------------------------------------------------------------------
+
+-- Create the database
+CREATE DATABASE IF NOT EXISTS SampleDB;
+USE SampleDB;
+
+-- Creating tables
+CREATE TABLE Employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    department VARCHAR(100),
+    salary DECIMAL(10, 2)
+);
+
+CREATE TABLE Departments (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    location VARCHAR(100)
+);
+
+-- Inserting sample data into tables
+INSERT INTO Employees (id, name, department, salary)
+VALUES 
+    (1, 'John', 'IT', 60000.00),
+    (2, 'Mary', 'HR', 45000.00),
+    (3, 'Michael', 'Finance', 55000.00),
+    (4, 'Emily', 'IT', 40000.00);
+
+INSERT INTO Departments (id, name, location)
+VALUES 
+    (101, 'IT', 'New York'),
+    (102, 'HR', 'Los Angeles'),
+    (103, 'Finance', 'Chicago');
+
+-- Implementation of 3 relational operators in SQL
+-- Selection
+SELECT * FROM Employees WHERE department = 'IT';
+
+-- Projection
+SELECT name, salary FROM Employees;
+
+-- Join
+SELECT Employees.name, Departments.location 
+FROM Employees 
+JOIN Departments ON Employees.department = Departments.name;
+
+-- Logical Operators and Pattern Matching
+-- Logical Operators
+SELECT * FROM Employees WHERE department = 'IT' AND salary > 50000;
+
+-- Pattern Matching
+SELECT * 
+FROM Employees 
+WHERE name LIKE 'J%N';
+
+
+
+ER-DIAGRAM
+   +-----------+               +--------------+
+   | Employees |               | Departments  |
+   +-----------+               +--------------+
+   | id        |               | id           |
+   | name      |               | name         |
+   | department|               | location     |
+   | salary    |               +--------------+
+   +-----------+
+
+
+
+--------------------------------------------------------------------------------------------
+				    QUESTION 4
+
+4. Consider following scenario: Each student will register one course in university.
+student = (Rno, S_name, S_city) course = (c_Id, c_name, duration)
+a. Draw E-R diagram and convert it into relational schema.
+b. Delete all the students living in specific city.
+c. Display list of courses having duration between 2 and 5
+d. Create view to display all the courses with duration=5.
+e. Display name of the course for which student with name ‘ABC’ has registered.
+
+--------------------------------------------------------------------------------------------
+
+-- Create database
+CREATE DATABASE STUDENT;
+USE STUDENT;
+
+-- Create tables
+CREATE TABLE Student (
+    Rno INT PRIMARY KEY,
+    S_name VARCHAR(100),
+    S_city VARCHAR(100),
+    c_Id INT -- Assuming c_Id represents the course ID to which the student is registered
+);
+
+CREATE TABLE Course (
+    c_Id INT PRIMARY KEY,
+    c_name VARCHAR(100),
+    duration INT
+);
+
+-- Insert sample data into tables
+INSERT INTO Student (Rno, S_name, S_city, c_Id) VALUES
+    (1, 'John', 'New York', 101),
+    (2, 'Mary', 'Los Angeles', 102),
+    (3, 'Michael', 'Chicago', 103),
+    (4, 'Emily', 'Los Angeles', 105);
+
+INSERT INTO Course (c_Id, c_name, duration) VALUES
+    (101, 'Mathematics', 4),
+    (102, 'Physics', 3),
+    (103, 'Biology', 5),
+    (104, 'Chemistry', 2),
+    (105, 'Computer Science', 5);
+
+-- Before deletion
+SELECT * FROM Student;
+
+-- b. Delete all the students living in a specific city
+DELETE FROM Student WHERE S_city = 'Los Angeles';
+
+-- After deletion
+SELECT * FROM Student;
+
+-- c. Display list of courses having duration between 2 and 5
+SELECT * FROM Course WHERE duration BETWEEN 2 AND 5;
+
+-- d. Create view to display all the courses with duration=5
+CREATE VIEW CoursesWithDuration5 AS
+SELECT * FROM Course WHERE duration = 5;
+
+SELECT * FROM CoursesWithDuration5;
+
+-- e. Display name of the course for which a student with a specific name has registered
+SELECT Course.c_name
+FROM Course 
+JOIN Student ON Course.c_Id = Student.c_Id
+WHERE Student.S_name = 'John'; -- Replace 'John' with the actual student name you're searching for
+
+
+
+ER-DIAGRAM:
+   +-----------+               +-----------+
+   |  Student  |               |  Course   |
+   +-----------+               +-----------+
+   | Rno       |               | c_Id      |
+   | S_name    |               | c_name    |
+   | S_city    |               | duration  |
+   +-----------+               +-----------+
+
+
+--------------------------------------------------------------------------------------------
+					QUESTION 5
+
+Consider following scenario: Each employee belongs to a department.
+employee = (eid, e_name, e_city, salary) dept = (dId, Dname, location)
+a .Draw E-R diagram and convert it into relational schema.
+b. Delete all the employees living in specific city.
+c. Display all employees whose name starts with ‘K’.
+d. Find the sum of salaries of employees in each department.
+e. Display list of employees having salary 20,000 or 50,000
+--------------------------------------------------------------------------------------------
+-- Create database
+CREATE DATABASE EmployeeManagement;
+USE EmployeeManagement;
+
+-- Create tables
+CREATE TABLE Department (
+    dId INT PRIMARY KEY,
+    Dname VARCHAR(100),
+    location VARCHAR(100)
+);
+
+CREATE TABLE Employee (
+    eid INT PRIMARY KEY,
+    e_name VARCHAR(100),
+    e_city VARCHAR(100),
+    salary DECIMAL(10, 2),
+    dId INT,
+    FOREIGN KEY (dId) REFERENCES Department(dId)
+);
+
+-- Insert sample data into tables
+INSERT INTO Department (dId, Dname, location) VALUES
+    (1, 'HR', 'New York'),
+    (2, 'IT', 'Los Angeles'),
+    (3, 'Finance', 'Chicago');
+
+INSERT INTO Employee (eid, e_name, e_city, salary, dId) VALUES
+    (101, 'John', 'New York', 50000, 1),
+    (102, 'Mary', 'Los Angeles', 60000, 2),
+    (103, 'Kevin', 'Chicago', 45000, 3),
+    (104, 'Katherine', 'Los Angeles', 55000, 2);
+
+-- Before deletion
+SELECT * FROM Employee;
+
+-- b. Delete all the employees living in a specific city
+DELETE FROM Employee WHERE e_city = 'Los Angeles';
+
+-- After deletion
+SELECT * FROM Employee;
+
+-- c. Display all employees whose name starts with 'K'
+SELECT * FROM Employee WHERE e_name LIKE 'K%';
+
+-- d. Find the sum of salaries of employees in each department
+SELECT d.Dname, SUM(e.salary) AS total_salary
+FROM Employee e
+JOIN Department d ON e.dId = d.dId
+GROUP BY d.Dname;
+
+-- e. Display list of employees having salary 20,000 or 50,000
+SELECT * FROM Employee WHERE salary IN (20000, 50000);
+
+
+
+ER-DAGRAM;
+   +-----------+               +-----------+
+   |  Employee |               |Department |
+   +-----------+               +-----------+
+   | eid       |               | dId       |
+   | e_name    |               | Dname     |
+   | e_city    |               | location  |
+   | salary    |               +-----------+
+   | dId       |               
+   +-----------+
+
+
+--------------------------------------------------------------------------------------------
+					QUESTION 6
+
+Create database and Perform following SQL queries on the database.
+a. Arithmetic operations (3 operations)
+b. Aggregate functions (3 operations)
+--------------------------------------------------------------------------------------------
+
+-- Create database
+CREATE DATABASE SampleDatabase;
+USE SampleDatabase;
+
+-- Create a table
+CREATE TABLE Numbers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    num1 INT,
+    num2 INT
+);
+
+-- Insert sample data into the table
+INSERT INTO Numbers (num1, num2) VALUES
+    (10, 5),
+    (20, 8),
+    (15, 3);
+
+-- a. Arithmetic operations (3 operations)
+-- 1. Addition
+SELECT num1, num2, num1 + num2 AS addition_result FROM Numbers;
+
+-- 2. Subtraction
+SELECT num1, num2, num1 - num2 AS subtraction_result FROM Numbers;
+
+-- 3. Multiplication
+SELECT num1, num2, num1 * num2 AS multiplication_result FROM Numbers;
+
+-- b. Aggregate functions (3 operations)
+-- 1. Sum
+SELECT SUM(num1) AS total_num1, SUM(num2) AS total_num2 FROM Numbers;
+
+-- 2. Average
+SELECT AVG(num1) AS average_num1, AVG(num2) AS average_num2 FROM Numbers;
+
+-- 3. Maximum and Minimum
+SELECT MAX(num1) AS max_num1, MIN(num2) AS min_num2
+FROM Numbers;
+
+--------------------------------------------------------------------------------------------
+				QUESTION 7
+
+Consider following scenario: Each student will register one course in university
+student = (Rno, S_name, S_city) course = (c_Id,c_ name, duration)
+a. Draw E-R diagram and convert it into relational schema.
+b. Find number of students for specific course.
+c. Delete all the students living in specific city.
+d. Display list of courses having duration between 2 and 5.
+--------------------------------------------------------------------------------------------
+-- Create tables
+CREATE TABLE Student (
+    Rno INT PRIMARY KEY,
+    S_name VARCHAR(100),
+    S_city VARCHAR(100)
+);
+
+CREATE TABLE Course (
+    c_Id INT PRIMARY KEY,
+    c_name VARCHAR(100),
+    duration INT
+);
+
+-- Insert sample data into tables
+INSERT INTO Student (Rno, S_name, S_city) VALUES
+    (1, 'John', 'New York'),
+    (2, 'Mary', 'Los Angeles'),
+    (3, 'Michael', 'Chicago'),
+    (4, 'Emily', 'Los Angeles');
+
+INSERT INTO Course (c_Id, c_name, duration) VALUES
+    (101, 'Mathematics', 4),
+    (102, 'Physics', 3),
+    (103, 'Biology', 5),
+    (104, 'Chemistry', 2),
+    (105, 'Computer Science', 5);
+
+-- b. Find number of students for specific course
+SELECT COUNT(*) AS num_students
+FROM Student
+WHERE Rno IN (SELECT Rno FROM CourseRegistration WHERE c_Id = 'specific_course_id');
+
+-- c. Delete all the students living in specific city
+DELETE FROM Student WHERE S_city = 'specific_city';
+
+-- d. Display list of courses having duration between 2 and 5
+SELECT * FROM Course WHERE duration BETWEEN 2 AND 5;
+
+
+ER-DIAGRAM:
+
+   +-----------+             +-----------+
+   |  Student  |             |  Course   |
+   +-----------+             +-----------+
+   | Rno       |             | c_Id      |
+   | S_name    |             | c_name    |
+   | S_city    |             | duration  |
+   +-----------+             +-----------+
+
+
+--------------------------------------------------------------------------------------------
+					QUESTION: 8
+
+Consider following scenario: Each employee belongs to a department.
+employee = (eid, e_name, e_city, salary) dept = (dId, Dname, location)
+a. Draw E-R diagram and convert it into relational schema.
+b. Find average salary of employees in specific department.
+c. Display list of employees having salary between 20,000 and 50,000.
+d. Display all employees whose name ends with ‘K’.
+e. Display names of employees working in ‘IT’ department in descending order
+--------------------------------------------------------------------------------------------
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS EmployeeManagement;
+USE EmployeeManagement;
+
+-- Create tables
+CREATE TABLE IF NOT EXISTS Employee (
+    eid INT PRIMARY KEY,
+    e_name VARCHAR(100),
+    e_city VARCHAR(100),
+    salary DECIMAL(10, 2),
+    dId INT,
+    FOREIGN KEY (dId) REFERENCES Department(dId)
+);
+
+CREATE TABLE IF NOT EXISTS Department (
+    dId INT PRIMARY KEY,
+    Dname VARCHAR(100),
+    location VARCHAR(100)
+);
+
+-- Insert sample data into tables
+INSERT INTO Department (dId, Dname, location) VALUES
+    (1, 'HR', 'New York'),
+    (2, 'IT', 'Los Angeles'),
+    (3, 'Finance', 'Chicago');
+
+INSERT INTO Employee (eid, e_name, e_city, salary, dId) VALUES
+    (101, 'John', 'New York', 50000, 1),
+    (102, 'Mary', 'Los Angeles', 60000, 2),
+    (103, 'Kevin', 'Chicago', 45000, 3),
+    (104, 'Katherine', 'Los Angeles', 55000, 2);
+
+-- b. Find average salary of employees in specific department
+SELECT AVG(salary) AS avg_salary
+FROM Employee
+WHERE dId = 'specific_department_id';
+
+-- c. Display list of employees having salary between 20,000 and 50,000
+SELECT * FROM Employee WHERE salary BETWEEN 20000 AND 50000;
+
+-- d. Display all employees whose name ends with 'K'
+SELECT * FROM Employee WHERE e_name LIKE '%K';
+
+-- e. Display names of employees working in 'IT' department in descending order
+SELECT e_name
+FROM Employee
+WHERE dId = (SELECT dId FROM Department WHERE Dname = 'IT')
+ORDER BY e_name DESC;
+
+		
+ER-DIAGRAM:
+   +-----------+               +-----------+
+   |  Employee |               | Department|
+   +-----------+               +-----------+
+   | eid       |               | dId       |
+   | e_name    |               | Dname     |
+   | e_city    |               | location  |
+   | salary    |               +-----------+
+   | dId       |               
+   +-----------+
+			 
+
+--------------------------------------------------------------------------------------------
+					QUESTION: 9
+Create a student table, showing the records of the students having
+a. Highest marks in math
+b. Lowest attendance
+c. Total number of students
+d. Average marks of DBMS
+--------------------------------------------------------------------------------------------
+
+RELATIONAL INTEGRITY:
+- The primary key (student_id) in the STUDENT table ensures each student record is uniquely identified.
+- Math_marks and attendance should have appropriate constraints to ensure valid values.
+- Foreign key constraints can be applied to math_marks and attendance columns to reference another table if necessary.
+*/
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS university_db;
+USE university_db;
+
+-- Create table STUDENT
+CREATE TABLE IF NOT EXISTS STUDENT (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_name VARCHAR(255),
+    math_marks INT CHECK (math_marks >= 0 AND math_marks <= 100),
+    attendance INT CHECK (attendance >= 0 AND attendance <= 100),
+    dbms_marks INT CHECK (dbms_marks >= 0 AND dbms_marks <= 100)
+);
+
+-- Insert sample data into STUDENT
+INSERT INTO STUDENT (student_name, math_marks, attendance, dbms_marks) VALUES
+('John Doe', 90, 80, 85),
+('Jane Smith', 85, 75, 90),
+('Mike Johnson', 95, 85, 80),
+('Emily Brown', 88, 70, 85),
+('Michael Davis', 92, 95, 90);
+
+/*
+a. Query to show the record of the student with the highest marks in math
+*/
+SELECT *
+FROM STUDENT
+WHERE math_marks = (SELECT MAX(math_marks) FROM STUDENT);
+
+/*
+b. Query to show the record of the student with the lowest attendance
+*/
+SELECT *
+FROM STUDENT
+WHERE attendance = (SELECT MIN(attendance) FROM STUDENT);
+
+/*
+c. Query to get the total number of students
+*/
+SELECT COUNT(*) AS total_students
+FROM STUDENT;
+
+/*
+d. Query to calculate the average marks of DBMS
+*/
+SELECT AVG(dbms_marks) AS average_dbms_marks
+FROM STUDENT;
+
+
+ER DIAGRAM:
+
++---------------------+         +-----------------+
+|       STUDENT       |         |   FOREIGN KEY   |
++---------------------+         +-----------------+
+| student_id (PK)     |---------| math_marks      |
+| student_name        |         | attendance      |
+| math_marks          |         | dbms_marks      |
+| attendance          |         +-----------------+
+| dbms_marks          |           
++---------------------+          
+
+--------------------------------------------------------------------------------------------
+                                   	QUESTION: 10
+
+Q.Consider the following scenario:
+employee = (eid, e_name, e_city, salary)
+Create a view (with at least 3 attributes) to display all the employees in descending order of their names.
+Alter the view by adding an email id column and insert the values in the new column.
+
+VIEW DEFINITION:
+A view is a virtual table based on the result set of a SELECT query. 
+It contains rows and columns like a real table but does not store any data itself. 
+Instead, it dynamically retrieves data from the underlying tables whenever it is queried.
+
+In this scenario, we first create a view named employee_view to display employee ID, name, and city, ordered in descending order of employee names. 
+Later, we alter the view to add an email_id column, which is derived by concatenating the employee name with '@example.com'.
+--------------------------------------------------------------------------------------------
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS company_db;
+USE company_db;
+
+-- Create table EMPLOYEE
+CREATE TABLE IF NOT EXISTS EMPLOYEE (
+    eid INT PRIMARY KEY,
+    e_name VARCHAR(255),
+    e_city VARCHAR(255),
+    salary DECIMAL(10, 2)
+);
+
+-- Insert sample data into EMPLOYEE
+INSERT INTO EMPLOYEE (eid, e_name, e_city, salary) VALUES
+(1, 'John Doe', 'New York', 50000.00),
+(2, 'Jane Smith', 'Los Angeles', 60000.00),
+(3, 'Mike Johnson', 'Chicago', 55000.00);
+
+-- Create view to display employees in descending order of their names
+CREATE VIEW employee_view AS
+SELECT eid, e_name, e_city
+FROM EMPLOYEE
+ORDER BY e_name DESC;
+
+-- Display data from the view
+SELECT * FROM employee_view;
+
+-- Drop the existing view
+DROP VIEW IF EXISTS employee_view;
+
+-- Recreate the view with the added email_id column
+CREATE VIEW employee_view AS
+SELECT eid, e_name, e_city, CONCAT(e_name, '@example.com') AS email_id
+FROM EMPLOYEE
+ORDER BY e_name DESC;
+
+-- Display updated data from the view
+SELECT * FROM employee_view;
+
+
+--------------------------------------------------------------------------------------------
+                                   	QUESTION: 11
+
+
+Create a Stored Procedure that will insert a new customer in the customer table and display all values from the customer table.
+
+STORED PROCEDURE DEFINITION:
+A stored procedure is a set of SQL statements that are stored in the database and can be called by name to perform a specific task. 
+In this case, the stored procedure will insert a new customer into the customer table and then display all values from the customer table.
+
+--------------------------------------------------------------------------------------------
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS company_db;
+USE company_db;
+
+
+-- Create table CUSTOMER
+CREATE TABLE IF NOT EXISTS CUSTOMER (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(255),
+    customer_email VARCHAR(255),
+    customer_phone VARCHAR(20)
+);
+
+-- Create stored procedure to insert a new customer and display all values from CUSTOMER table
+DELIMITER //
+CREATE PROCEDURE InsertAndDisplayCustomer(
+    IN p_customer_name VARCHAR(255),
+    IN p_customer_email VARCHAR(255),
+    IN p_customer_phone VARCHAR(20)
+)
+BEGIN
+    -- Insert new customer
+    INSERT INTO CUSTOMER (customer_name, customer_email, customer_phone)
+    VALUES (p_customer_name, p_customer_email, p_customer_phone);
+    
+    -- Display all values from CUSTOMER table
+    SELECT * FROM CUSTOMER;
+END //
+DELIMITER ;
+
+-- Call stored procedure to insert a new customer and display all values from CUSTOMER table
+CALL InsertAndDisplayCustomer('John Doe', 'john@example.com', '1234567890');
+
+
+--------------------------------------------------------------------------------------------
+                                   	QUESTION: 12
+Create a simple SQL trigger (row level) that shall perform a check before the INSERT statement.
+
+TRIGGER DEFINITION:
+A SQL trigger is a stored program that is automatically executed or fired 
+when certain events occur in the database management system. 
+A row-level trigger is a type of trigger that operates on each row that is affected by the triggering event.
+
+--------------------------------------------------------------------------------------------
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS company_db;
+USE company_db;
+
+-- Create table EMPLOYEE
+CREATE TABLE IF NOT EXISTS EMPLOYEE (
+    E_id INT PRIMARY KEY,
+    E_name VARCHAR(255),
+    E_dept VARCHAR(255),
+    E_salary DECIMAL(10, 2),
+    E_city VARCHAR(255)
+);
+
+-- Create trigger to perform a check before INSERT
+DELIMITER //
+CREATE TRIGGER check_employee_salary
+BEFORE INSERT ON EMPLOYEE
+FOR EACH ROW
+BEGIN
+    IF NEW.E_salary < 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Salary cannot be negative';
+    END IF;
+END //
+DELIMITER ;
+
+-- Insert data into EMPLOYEE with valid salary
+INSERT INTO EMPLOYEE (E_id, E_name, E_dept, E_salary, E_city) VALUES
+(1, 'John Doe', 'IT', 50000.00, 'New York');
+
+-- Insert data into EMPLOYEE with invalid salary (negative value)
+INSERT INTO EMPLOYEE (E_id, E_name, E_dept, E_salary, E_city) VALUES
+(2, 'Jane Smith', 'HR', -60000.00, 'Los Angeles');
+
+-- Select data from EMPLOYEE to verify insertions
+SELECT * FROM EMPLOYEE;
+
+
+--------------------------------------------------------------------------------------------
+                                   	QUESTION: 13
+a) Execute DDL and DML commands on any database.
+b) Create SQL VIEW to fetch some attributes of a table.
+
+VIEW DEFINITION:
+A SQL view is a virtual table based on the result of an SQL statement. It contains rows and columns, just like a real table, but it does not store any data itself. Instead, it dynamically retrieves data from the underlying tables whenever the view is queried.
+
+--------------------------------------------------------------------------------------------
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS company_db;
+USE company_db;
+
+-- Create table EMPLOYEE
+CREATE TABLE IF NOT EXISTS EMPLOYEE (
+    E_id INT PRIMARY KEY,
+    E_name VARCHAR(255),
+    E_dept VARCHAR(255),
+    E_salary DECIMAL(10, 2),
+    E_city VARCHAR(255)
+);
+
+-- Insert sample data into EMPLOYEE
+INSERT INTO EMPLOYEE (E_id, E_name, E_dept, E_salary, E_city) VALUES
+(1, 'John Doe', 'IT', 50000.00, 'New York'),
+(2, 'Jane Smith', 'HR', 60000.00, 'Los Angeles'),
+(3, 'Mike Johnson', 'Finance', 55000.00, 'Chicago');
+
+-- Execute DML commands
+UPDATE EMPLOYEE SET E_salary = 52000.00 WHERE E_id = 1;
+DELETE FROM EMPLOYEE WHERE E_id = 3;
+
+-- Create VIEW to fetch some attributes of EMPLOYEE table
+CREATE VIEW employee_info AS
+SELECT E_id, E_name, E_salary
+FROM EMPLOYEE;
+
+-- Fetch data from VIEW
+SELECT * FROM employee_info;
+
+
+
+--------------------------------------------------------------------------------------------
+					QUESTION: 14
+
+a) Execute DDL and DML commands on any database.
+b) Write and execute suitable database trigger.
+
+TRIGGER DEFINITION:
+A database trigger is a stored program that is automatically executed 
+or fired when certain events occur in the database management system.
+ These events can include DML operations like INSERT, UPDATE, or DELETE 
+on a table, or DDL operations like CREATE, ALTER, or DROP.
+
+--------------------------------------------------------------------------------------------
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS company_db;
+USE company_db;
+
+-- Create table EMPLOYEE
+CREATE TABLE IF NOT EXISTS EMPLOYEE (
+    E_id INT PRIMARY KEY,
+    E_name VARCHAR(255),
+    E_dept VARCHAR(255),
+    E_salary DECIMAL(10, 2),
+    E_city VARCHAR(255)
+);
+
+-- Create table EMPLOYEE_LOG for trigger
+CREATE TABLE IF NOT EXISTS EMPLOYEE_LOG (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    E_id INT,
+    E_name VARCHAR(255),
+    E_dept VARCHAR(255),
+    insert_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create trigger to log employee insertions
+DELIMITER //
+CREATE TRIGGER log_employee_insert
+AFTER INSERT ON EMPLOYEE
+FOR EACH ROW
+BEGIN
+    INSERT INTO EMPLOYEE_LOG (E_id, E_name, E_dept)
+    VALUES (NEW.E_id, NEW.E_name, NEW.E_dept);
+END //
+DELIMITER ;
+
+-- Insert sample data into EMPLOYEE
+INSERT INTO EMPLOYEE (E_id, E_name, E_dept, E_salary, E_city) VALUES
+(1, 'John Doe', 'IT', 50000.00, 'New York'),
+(2, 'Jane Smith', 'HR', 60000.00, 'Los Angeles'),
+(3, 'Mike Johnson', 'Finance', 55000.00, 'Chicago');
+
+-- Execute DML commands
+UPDATE EMPLOYEE SET E_salary = 52000.00 WHERE E_id = 1;
+DELETE FROM EMPLOYEE WHERE E_id = 3;
+
+-- Check EMPLOYEE_LOG for trigger execution
+SELECT * FROM EMPLOYEE_LOG;
+
+
+
+--------------------------------------------------------------------------------------------
+                                   	Question 15 
+ 
+Create table EMPLOYEE with attributes E_id, E_name, E_dept, E_salary,  E_city. 
+Create an Stored Procedure that will compute the highest salary of the employee 
+and the display record of that employee. 
+
+--------------------------------------------------------------------------------------------
+-- Create database
+CREATE DATABASE IF NOT EXISTS company_db;
+USE company_db;
+
+-- Create table EMPLOYEE
+CREATE TABLE IF NOT EXISTS EMPLOYEE (
+    E_id INT PRIMARY KEY,
+    E_name VARCHAR(255),
+    E_dept VARCHAR(255),
+    E_salary DECIMAL(10, 2),
+    E_city VARCHAR(255)
+);
+
+-- Insert sample data into EMPLOYEE
+INSERT INTO EMPLOYEE (E_id, E_name, E_dept, E_salary, E_city) VALUES
+(1, 'John Doe', 'IT', 50000.00, 'New York'),
+(2, 'Jane Smith', 'HR', 60000.00, 'Los Angeles'),
+(3, 'Mike Johnson', 'Finance', 55000.00, 'Chicago');
+
+-- Create stored procedure to get highest salary employee
+DELIMITER //
+CREATE PROCEDURE GetHighestSalaryEmployee()
+BEGIN
+    DECLARE max_salary DECIMAL(10, 2);
+    
+    -- Find the highest salary
+    SELECT MAX(E_salary) INTO max_salary FROM EMPLOYEE;
+    
+    -- Retrieve the record of the employee with the highest salary
+    SELECT * FROM EMPLOYEE WHERE E_salary = max_salary;
+END //
+DELIMITER ;
+
+-- Call the stored procedure to get the employee with the highest salary
+CALL GetHighestSalaryEmployee();
+
+
+--------------------------------------------------------------------------------------------
+                                   	QUESTION 16
+
+Consider following scenario: Each publishing house publishes many books. 
+          book = (bid, title, author,  price)       publishing_house = (PId, Pname, location)
+a Draw E-R diagram and convert it into relational schema.
+b Find total price of books published by specific publishing house.
+c Create view to display all the books in descending order of their titles.
+d Perform bulk insert.
+e Display all publishing house whose name ends with ‘E’.
+--------------------------------------------------------------------------------------------
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS publishing_db;
+USE publishing_db;
+
+-- Create tables
+CREATE TABLE IF NOT EXISTS publishing_house (
+    PId INT PRIMARY KEY,
+    Pname VARCHAR(255),
+    location VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS book (
+    bid INT PRIMARY KEY,
+    title VARCHAR(255),
+    author VARCHAR(255),
+    price DECIMAL(10, 2),
+    PId INT,
+    FOREIGN KEY (PId) REFERENCES publishing_house(PId)
+);
+
+-- Insert data
+INSERT INTO publishing_house (PId, Pname, location) VALUES
+(1, 'Publisher A', 'New York'),
+(2, 'Publisher B', 'London');
+select * from publishing_house ;
+
+INSERT INTO book (bid, title, author, price, PId) VALUES
+(1, 'DBMS', 'Author X', 250.00, 1),
+(2, 'Data Structures', 'Author Y', 300.00, 1),
+(3, 'Algorithms', 'Author Z', 400.00, 2),
+(4, 'Networking', 'Author W', 450.00, 2),
+(5, 'Computer Vision', 'Author V', 550.00, 1);
+select * from book ;
+
+-- Find total price of books published by specific publishing house here book published by publication_house with pid 1 will output
+SELECT SUM(price) AS total_price
+FROM book
+WHERE PId = 1;
+select * from book ;
+
+
+-- Create view to display all the books in descending order of their titles
+CREATE VIEW books_desc_title AS
+SELECT *
+FROM book
+ORDER BY title DESC;
+
+
+-- Perform bulk insert
+INSERT INTO book (bid, title, author, price, PId)
+VALUES
+    (6, 'Book1', 'Author1', 20.00, 1),
+    (7, 'Book2', 'Author2', 25.00, 1),
+    (8, 'Book3', 'Author3', 30.00, 1);
+
+-- Display all publishing houses whose name ends with ‘E’
+SELECT *
+FROM publishing_house
+WHERE Pname LIKE '%E';
+
+
+ER DIAGRAM :
+
++-------------------+          +----------------+
+|   publishing_house|          |      book      |
++-------------------+          +----------------+
+| PId (PK)          |          |    bid (PK)    |
+| Pname             |          |    title       |
+| location          |          |    author      |
++-------------------+          |    price       |
+                               |    PId (FK)    |
+                                +----------------+
+
+                             
+--------------------------------------------------------------------------------------------
+                                   	QUESTION 17
+
+/*Consider following scenario:  Each publishing house publishes many books.
+book = (bid, title, author,  price)         publishing_house = (PId, Pname, location)
+Draw E-R diagram and convert it into relational schema.
+Update location of a specific publishing house.
+Delete book having specific title.
+Display list of books having price between 200 and 500.
+Display name of publishing house which has published book with title ‘DBMS’.
+*/
+---------------------------------------------------------------------------------------
+--create DB
+CREATE DATABASE IF NOT EXISTS publishing_db;
+
+-- Use the database
+USE publishing_db;
+
+-- Create tables
+CREATE TABLE IF NOT EXISTS publishing_house (
+    PId INT PRIMARY KEY,
+    Pname VARCHAR(255),
+    location VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS book (
+    bid INT PRIMARY KEY,
+    title VARCHAR(255),
+    author VARCHAR(255),
+    price DECIMAL(10, 2),
+    PId INT,
+    FOREIGN KEY (PId) REFERENCES publishing_house(PId)
+);
+
+-- Insert sample data
+INSERT INTO publishing_house (PId, Pname, location) VALUES
+(1, 'Publisher A', 'New York'),
+(2, 'Publisher B', 'London');
+
+INSERT INTO book (bid, title, author, price, PId) VALUES
+(1, 'DBMS', 'Author X', 250.00, 1),
+(2, 'Data Structures', 'Author Y', 300.00, 1),
+(3, 'Algorithms', 'Author Z', 400.00, 2),
+(4, 'Networking', 'Author W', 450.00, 2),
+(5, 'Computer Vision', 'Author V', 550.00, 1);
+
+
+-- Update location of a specific publishing house
+UPDATE publishing_house
+SET location = 'San Francisco'
+WHERE PId = 1;
+select * from publishing_house ;
+
+-- Delete book having specific title
+DELETE FROM book
+WHERE title = 'Algorithms';
+select * from book ;
+
+-- Display list of books having price between 200 and 500
+SELECT title
+FROM book
+WHERE price BETWEEN 200 AND 500;
+select * from book ;
+
+-- Display name of publishing house which has published book with title ‘DBMS’
+SELECT Pname
+FROM publishing_house
+WHERE PId IN (SELECT PId FROM book WHERE title = 'DBMS');
+
+                +-------------------+
+                |   publishing_house|
+                +-------------------+
+                | PId (PK)          |
+                | Pname             |
+                | location          |
+                +-------------------+
+                        |
+                        |
+                        |
+                        |
+                +-------------------+
+                |        book       |
+                +-------------------+
+                | bid (PK)          |
+                | title             |
+                | author            |
+                | price             |
+                | PId (FK)          |
+                +-------------------+
+
